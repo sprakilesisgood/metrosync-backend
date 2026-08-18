@@ -1,0 +1,428 @@
+{
+  "info": {
+    "name": "MetroSync API",
+    "description": "MetroSync backend — stations, admin auth, and announcements. Set the `token` variable from the login response, then use the protected POST.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://metrosync-backend-93q7.onrender.com"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "stationId",
+      "value": "6a84379edf216dcb9e6d6a98"
+    }
+  ],
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "Login (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@metrosync.io\",\n  \"password\": \"admin1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Returns a JWT for valid admin credentials. Copy `token` into the collection variable."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const b = pm.response.json();",
+                  "if (b.token) pm.collectionVariables.set(\"token\", b.token);",
+                  "pm.test(\"200 + token\", () => { pm.response.to.have.status(200); pm.expect(b.token).to.be.a(\"string\"); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhODQzNzlmZGYyMTZkY2I5ZTZkNmFhMSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4NzA1MDMzMCwiZXhwIjoxNzg3MTM2NzMwfQ.kEiDpnKk_NcQDY-ylqRTgTrx-VMYnTEEz1XYli0yHeM\",\n  \"admin\": {\n    \"id\": \"6a84379fdf216dcb9e6d6aa1\",\n    \"email\": \"admin@metrosync.io\",\n    \"role\": \"admin\"\n  }\n}",
+              "_postman_previewlanguage": "json",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@metrosync.io\",\n  \"password\": \"admin1234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "401 Unauthorized",
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Invalid email or password\"\n}",
+              "_postman_previewlanguage": "json",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@metrosync.io\",\n  \"password\": \"wrong\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "stations",
+      "item": [
+        {
+          "name": "List stations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "stations"
+              ]
+            },
+            "description": "All stations, sorted by line then order."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"_id\": \"6a84379edf216dcb9e6d6a98\",\n    \"name\": \"Riverside\",\n    \"line\": \"Blue\",\n    \"order\": 1,\n    \"code\": \"B1\",\n    \"lat\": 40.71,\n    \"lng\": -74.02,\n    \"__v\": 0,\n    \"createdAt\": \"2026-08-18T10:44:46.945Z\",\n    \"updatedAt\": \"2026-08-18T10:44:46.945Z\"\n  },\n  {\n    \"_id\": \"6a84379edf216dcb9e6d6a99\",\n    \"name\": \"Market\",\n    \"line\": \"Blue\",\n    \"order\": 2,\n    \"code\": \"B2\",\n    \"lat\": 40.72,\n    \"lng\": -74,\n    \"__v\": 0,\n    \"createdAt\": \"2026-08-18T10:44:46.945Z\",\n    \"updatedAt\": \"2026-08-18T10:44:46.945Z\"\n  },\n  {\n    \"_id\": \"6a84379edf216dcb9e6d6a9a\",\n    \"name\": \"Parkway\",\n    \"line\": \"Blue\",\n    \"order\": 3,\n    \"code\": \"B3\",\n    \"lat\": 40.73,\n    \"lng\": -73.985,\n    \"__v\": 0,\n    \"createdAt\": \"2026-08-18T10:44:46.945Z\",\n    \"updatedAt\": \"2026-08-18T10:44:46.945Z\"\n  },\n  {\n    \"_id\": \"6a84379edf216dcb9e6d6a9b\",\n    \"name\": \"Airport\",\n    \"line\": \"Blue\",\n    \"order\": 4,\n    \"code\": \"B4\",\n    \"lat\": 40.64,\n    \"lng\": -73.78,\n    \"__v\": 0,\n    \"createdAt\": \"2026-08-18T10:44:46.945Z\",\n    \"updatedAt\": \"2026-08-18T10:44:46.945Z\"\n  },\n  {\n    \"_id\": \"6a84379edf216dcb9e6d6a9c\",\n    \"name\": \"Garden\",\n    \"line\": \"Green\",\n    \"order\": 1,\n    \"code\": \"G1\",\n    \"lat\": 40.68,\n    \"lng\": -73.94,\n    \"__v\": 0,\n    \"createdAt\": \"2026-08-18T10:44:46.945Z\",\n    \"updatedAt\": \"2026-08-18T10:44:46.945Z\"\n  },\n  {\n    \"_id\": \"6a84379edf216dcb9e6d6a9d\",\n    \"name\": \"Stadium\",\n    \"line\": \"Green\",\n    \"order\": 2,\n    \"code\": \"G2\",\n    \"lat\": 40.69,\n    \"lng\": -73.93,\n    \"__v\": 0,\n    \"createdAt\": \"2026-08-18T10:44:46.945Z\",\n    \"updatedAt\": \"2026-08-18T10:44:46.945Z\"\n  },\n  {\n    \"_id\": \"6a84379edf216dcb9e6d6a9e\",\n    \"name\": \"Meadow\",\n    \"line\": \"Green\",\n    \"order\": 3,\n    \"code\": \"G3\",\n    \"lat\": 40.7,\n    \"lng\": -73.92,\n    \"__v\": 0,\n    \"createdAt\": \"2026-08-18T10:44:46.945Z\",\n    \"updatedAt\": \"2026-08-18T10:44:46.945Z\"\n  },\n  {\n    \"_id\": \"6a84379edf216dcb9e6d6a94\",\n    \"name\": \"Central\",\n    \"line\": \"Red\",\n    \"order\": 1,\n    \"code\": \"R1\",\n    \"lat\": 40.7128,\n    \"lng\": -74.006,\n    \"__v\": 0,\n    \"createdAt\": \"2026-08-18T10:44:46.943Z\",\n    \"updatedAt\": \"2026-08-18T10:44:46.943Z\"\n  },\n  {\n    \"_id\": \"6a84379edf216dcb9e6d6a95\",\n    \"name\": \"Union\",\n    \"line\": \"Red\",\n    \"order\": 2,\n    \"code\": \"R2\",\n    \"lat\": 40.735,\n    \"lng\": -73.99,\n    \"__v\": 0,\n    \"createdAt\": \"2026-08-18T10:44:46.944Z\",\n    \"updatedAt\": \"2026-08-18T10:44:46.944Z\"\n  },\n  {\n    \"_id\": \"6a84379edf216dcb9e6d6a96\",\n    \"name\": \"Harbor\",\n    \"line\": \"Red\",\n    \"order\": 3,\n    \"code\": \"R3\",\n    \"lat\": 40.75,\n    \"lng\": -73.98,\n    \"__v\": 0,\n    \"createdAt\": \"2026-08-18T10:44:46.944Z\",\n    \"updatedAt\": \"2026-08-18T10:44:46.944Z\"\n  },\n  {\n    \"_id\": \"6a84379edf216dcb9e6d6a97\",\n    \"name\": \"Summit\",\n    \"line\": \"Red\",\n    \"order\": 4,\n    \"code\": \"R4\",\n    \"lat\": 40.77,\n    \"lng\": -73.97,\n    \"__v\": 0,\n    \"createdAt\": \"2026-08-18T10:44:46.944Z\",\n    \"updatedAt\": \"2026-08-18T10:44:46.944Z\"\n  }\n]",
+              "_postman_previewlanguage": "json",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/stations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "stations"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "announcements",
+      "item": [
+        {
+          "name": "List station announcements",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stations/{{stationId}}/announcements?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "stations",
+                "%7B%7BstationId%7D%7D",
+                "announcements"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Newest-first, paginated. Optional filters: `type`, `since`."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"items\": [],\n  \"total\": 0,\n  \"page\": 1,\n  \"limit\": 10,\n  \"pages\": 0\n}",
+              "_postman_previewlanguage": "json",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/stations/{{stationId}}/announcements?page=1&limit=10",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "stations",
+                    "%7B%7BstationId%7D%7D",
+                    "announcements"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create announcement (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Train delayed 5 minutes\",\n  \"type\": \"delay\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stations/{{stationId}}/announcements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "stations",
+                "%7B%7BstationId%7D%7D",
+                "announcements"
+              ]
+            },
+            "description": "Protected by requireAdmin. Saves then broadcasts over Socket.io."
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"text\": \"Sample announcement\",\n  \"station\": \"6a84379edf216dcb9e6d6a98\",\n  \"type\": \"info\",\n  \"_id\": \"6a84395a8bca4cb636067a6d\",\n  \"createdAt\": \"2026-08-18T10:52:10.605Z\",\n  \"updatedAt\": \"2026-08-18T10:52:10.605Z\",\n  \"__v\": 0\n}",
+              "_postman_previewlanguage": "json",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"text\": \"Sample announcement\",\n  \"type\": \"info\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/stations/{{stationId}}/announcements",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "stations",
+                    "%7B%7BstationId%7D%7D",
+                    "announcements"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "401 Unauthorized (no token)",
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Missing or malformed Authorization header\"\n}",
+              "_postman_previewlanguage": "json",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"text\": \"no token\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/stations/{{stationId}}/announcements",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "stations",
+                    "%7B%7BstationId%7D%7D",
+                    "announcements"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
